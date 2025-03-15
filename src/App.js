@@ -164,23 +164,33 @@ function App() {
               closeAfterTransition
               BackdropComponent={Backdrop}
               BackdropProps={{ timeout: 500 }}
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                overflow: 'auto' // Allow scrolling if content is too large
+              }}
             >
               <Fade in={showHowItWorks}>
                 <Box sx={{ 
                   outline: 'none', 
-                  width: '85%', 
-                  maxWidth: '85%',
-                  minHeight: 'calc(85vh)',
-                  overflow: 'hidden',
-                  p: 2,
+                  width: '90%', 
+                  maxWidth: '1200px', // Match the typical Container maxWidth="lg" size
+                  minHeight: 'auto', // Allow content to determine height
+                  maxHeight: '90vh', // Prevent from being too tall
+                  overflow: 'auto', // Enable scrolling if needed
+                  p: 3,
                   position: 'relative',
                   bgcolor: 'background.paper',
                   borderRadius: 2,
                   boxShadow: 24,
                   m: 2,
-                  transform: 'scale(0.95)',
-                  '& .MuiContainer-root': { height: '100%' }
+                  transform: 'scale(1.05)', // Match the 5% size increase from the main page
+                  transformOrigin: 'center top',
+                  '& .MuiContainer-root': { 
+                    height: 'auto',
+                    width: '100%'
+                  }
                 }}>
                   <IconButton
                     aria-label="close"
@@ -200,7 +210,8 @@ function App() {
                   >
                     <CloseIcon />
                   </IconButton>
-                  <HowItWorks onClose={() => setShowHowItWorks(false)} isModal={true} scale={0.95} />
+                  {/* Use isModal=false to match the main page version */}
+                  <HowItWorks onClose={() => setShowHowItWorks(false)} isModal={false} scale={1} />
                 </Box>
               </Fade>
             </Modal>
