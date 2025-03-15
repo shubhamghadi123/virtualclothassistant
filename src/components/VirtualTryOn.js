@@ -147,12 +147,12 @@ const VirtualTryOn = () => {
       setSnackbarOpen(true);
       
       // Use fallback image
-      useFallbackImage();
+      loadFallbackImage();
     }
   };
   
   // Separate function to handle fallback image logic
-  const useFallbackImage = () => {
+  const loadFallbackImage = () => {
     const mockImageUrl = createFallbackImage();
     
     try {
