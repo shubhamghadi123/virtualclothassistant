@@ -17,8 +17,8 @@ import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 // API configuration for Segmind
-const API_KEY = 'SG_9be9068dab0742d3';
-const API_URL = 'https://api.segmind.com/v1/try-on-diffusion';
+const API_KEY = process.env.REACT_APP_API_KEY || 'SG_9be9068dab0742d3';
+const API_URL = process.env.REACT_APP_API_URL || 'https://api.segmind.com/v1/try-on-diffusion';
 
 // Create a fallback image function outside of component
 const createFallbackImage = () => {
