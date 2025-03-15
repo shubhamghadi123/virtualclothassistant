@@ -12,18 +12,49 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+/**
+ * Register Component
+ * Handles user registration functionality with form validation
+ */
 const Register = () => {
+  // Hooks
   const theme = useTheme();
   const navigate = useNavigate();
   const { register } = useAuth();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
   const [error, setError] = useState('');
-
+  
+  // Destructure form data for convenience
+  const { username, email, password, confirmPassword } = formData;
+  
+  /**
+   * Handle input changes for all form fields
+   * @param {Object} e - Event object
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+  
+  /**
+   * Form submission handler with validation
+   * @param {Object} e - Event object
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Reset previous errors
+    setError('');
     
     // Basic validation
     if (!username || !email || !password || !confirmPassword) {
@@ -52,6 +83,9 @@ const Register = () => {
     }
   };
 
+  // Common styles
+  const textFieldStyles = { mb: 2 };
+  
   return (
     <Box 
       sx={{ 
@@ -63,6 +97,7 @@ const Register = () => {
         py: 4
       }}
     >
+      {/* Registration form container */}
       <Container maxWidth="sm" sx={{ width: '500px' }}>
         <Paper 
           elevation={4} 
@@ -72,6 +107,7 @@ const Register = () => {
             borderTop: `4px solid ${theme.palette.secondary.main}`,
           }}
         >
+          {/* Form title */}
           <Typography 
             variant="h4" 
             component="h1" 
@@ -86,6 +122,7 @@ const Register = () => {
             Register
           </Typography>
           
+          {/* Error message display */}
           {error && (
             <Typography 
               color="error" 
@@ -97,7 +134,9 @@ const Register = () => {
             </Typography>
           )}
           
+          {/* Registration form */}
           <Box component="form" onSubmit={handleSubmit} noValidate>
+            {/* Username field */}
             <TextField
               margin="normal"
               required
@@ -108,10 +147,11 @@ const Register = () => {
               autoComplete="username"
               autoFocus
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              sx={{ mb: 2 }}
+              onChange={handleChange}
+              sx={textFieldStyles}
             />
             
+            {/* Email field */}
             <TextField
               margin="normal"
               required
@@ -122,10 +162,11 @@ const Register = () => {
               autoComplete="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{ mb: 2 }}
+              onChange={handleChange}
+              sx={textFieldStyles}
             />
             
+            {/* Password field */}
             <TextField
               margin="normal"
               required
@@ -136,10 +177,11 @@ const Register = () => {
               id="password"
               autoComplete="new-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 2 }}
+              onChange={handleChange}
+              sx={textFieldStyles}
             />
             
+            {/* Confirm password field */}
             <TextField
               margin="normal"
               required
@@ -150,10 +192,11 @@ const Register = () => {
               id="confirmPassword"
               autoComplete="new-password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={handleChange}
               sx={{ mb: 3 }}
             />
             
+            {/* Submit button */}
             <Button
               type="submit"
               fullWidth
@@ -170,6 +213,7 @@ const Register = () => {
               REGISTER
             </Button>
             
+            {/* Login link */}
             <Box sx={{ textAlign: 'center', mt: 2, mb: 2 }}>
               <Typography variant="body2" display="inline" sx={{ mr: 1 }}>
                 Already a member?

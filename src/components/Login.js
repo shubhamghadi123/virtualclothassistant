@@ -12,16 +12,47 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+/**
+ * Login Component
+ * Handles user authentication with form validation
+ */
 const Login = () => {
+  // Hooks
   const theme = useTheme();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
   const [error, setError] = useState('');
+  
+  // Destructure form data for convenience
+  const { username, password } = formData;
+  
+  /**
+   * Handle input changes for all form fields
+   * @param {Object} e - Event object
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
+  /**
+   * Form submission handler with validation
+   * @param {Object} e - Event object
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Reset previous errors
+    setError('');
     
     // Basic validation
     if (!username || !password) {
@@ -38,6 +69,16 @@ const Login = () => {
     }
   };
 
+  // Common styles
+  const textFieldStyles = { mb: 2 };
+  const linkStyles = { 
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
+  };
+
   return (
     <Box 
       sx={{ 
@@ -49,6 +90,7 @@ const Login = () => {
         py: 4
       }}
     >
+      {/* Login form container */}
       <Container maxWidth="xs" sx={{ width: '100%' }}>
         <Paper 
           elevation={4} 
@@ -58,6 +100,7 @@ const Login = () => {
             borderTop: `4px solid ${theme.palette.primary.main}`,
           }}
         >
+          {/* Form title */}
           <Typography 
             variant="h4" 
             component="h1" 
@@ -72,6 +115,7 @@ const Login = () => {
             Login
           </Typography>
           
+          {/* Error message display */}
           {error && (
             <Typography 
               color="error" 
@@ -83,7 +127,9 @@ const Login = () => {
             </Typography>
           )}
           
+          {/* Login form */}
           <Box component="form" onSubmit={handleSubmit} noValidate>
+            {/* Username field */}
             <TextField
               margin="normal"
               required
@@ -94,10 +140,11 @@ const Login = () => {
               autoComplete="username"
               autoFocus
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              sx={{ mb: 2 }}
+              onChange={handleChange}
+              sx={textFieldStyles}
             />
             
+            {/* Password field */}
             <TextField
               margin="normal"
               required
@@ -108,10 +155,11 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleChange}
               sx={{ mb: 3 }}
             />
             
+            {/* Submit button */}
             <Button
               type="submit"
               fullWidth
@@ -128,17 +176,13 @@ const Login = () => {
               LOGIN
             </Button>
             
+            {/* Additional links */}
             <Box sx={{ textAlign: 'center', mt: 2 }}>
+              {/* Forgot password link */}
               <Link 
                 href="#" 
                 variant="body2"
-                sx={{ 
-                  color: theme.palette.primary.main,
-                  textDecoration: 'none',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
+                sx={linkStyles}
                 onClick={(e) => {
                   e.preventDefault();
                   // Handle forgot password
@@ -147,6 +191,7 @@ const Login = () => {
                 Forgot Password?
               </Link>
               
+              {/* Registration link */}
               <Box sx={{ mt: 4, mb: 2 }}>
                 <Typography variant="body2" display="inline" sx={{ mr: 1 }}>
                   New user?
@@ -155,12 +200,8 @@ const Login = () => {
                   href="#" 
                   variant="body2"
                   sx={{ 
-                    color: theme.palette.primary.main,
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    '&:hover': {
-                      textDecoration: 'underline'
-                    }
+                    ...linkStyles,
+                    fontWeight: 600
                   }}
                   onClick={(e) => {
                     e.preventDefault();
