@@ -332,7 +332,12 @@ const VirtualTryOn = () => {
           pb: 4,
           scrollMarginTop: '80px', // Add scroll margin to account for header
           borderRadius: 2,
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          transform: 'scale(1.05)', // Increase size by 5%
+          transformOrigin: 'center top', // Keep the scaling centered
+          width: '100%', // Ensure the container takes full width
+          mx: 'auto', // Center the container
+          maxWidth: '95%' // Prevent overflow issues
         }} 
         id="how-it-works"
       >

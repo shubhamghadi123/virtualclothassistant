@@ -336,7 +336,13 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
     <Container 
       maxWidth={false} 
       disableGutters={isModal}
-      sx={containerStyles}
+      sx={{ 
+        ...containerStyles,
+        // Adjust for the parent container's scale increase
+        transform: `scale(${scale})`,
+        width: '100%',
+        px: { xs: 1, sm: 2 }, // Add some padding on smaller screens
+      }}
     >
       <Paper elevation={3} sx={mainPaperStyles}>
         {/* Main title */}
