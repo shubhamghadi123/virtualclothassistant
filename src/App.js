@@ -56,8 +56,8 @@ const ScrollToSection = () => {
   const { hash, pathname } = useLocation();
   
   useEffect(() => {
-    // Only proceed if we have a hash and we're on the home page
-    if (hash && pathname === '/') {
+    // Only proceed if we have a hash and we're on the home page (with or without authentication)
+    if (hash && (pathname === '/' || pathname === '')) {
       // Remove the '#' character
       const id = hash.replace('#', '');
       
@@ -80,6 +80,8 @@ const ScrollToSection = () => {
           setTimeout(() => {
             element.classList.remove('highlight-section');
           }, 2000);
+        } else {
+          console.log(`Element with id "${id}" not found`);
         }
       }, 500);
     }
@@ -98,7 +100,9 @@ function App() {
   }, [showHowItWorks]);
 
   const handleOpenHowItWorks = () => {
-    if (window.location.pathname === '/') {
+    // Check if we're on any page that has the main application content
+    // This works for both authenticated and unauthenticated states
+    if (window.location.pathname === '/' || window.location.pathname === '') {
       // Improved scroll functionality
       const howItWorksSection = document.getElementById('how-it-works');
       if (howItWorksSection) {
@@ -116,6 +120,8 @@ function App() {
           howItWorksSection.setAttribute('tabindex', '-1');
           howItWorksSection.focus({ preventScroll: true });
         }, 100);
+      } else {
+        console.log('How It Works section not found in the DOM');
       }
     } else {
       setShowHowItWorks(true);

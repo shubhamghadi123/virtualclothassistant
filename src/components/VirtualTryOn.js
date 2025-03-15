@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Box, 
   Grid, 
@@ -43,6 +43,16 @@ const VirtualTryOn = () => {
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
+  // Reference to the how-it-works section
+  const howItWorksRef = useRef(null);
+  
+  // Debug effect to check if the how-it-works section is properly mounted
+  useEffect(() => {
+    if (howItWorksRef.current) {
+      console.log('How It Works section mounted with ID:', howItWorksRef.current.id);
+    }
+  }, []);
 
   const handleImageUpload = (image, type) => {
     if (type === 'model') {
@@ -315,6 +325,7 @@ const VirtualTryOn = () => {
       </Box>
       
       <Box 
+        ref={howItWorksRef}
         sx={{ 
           mt: 6, 
           pt: 2,
