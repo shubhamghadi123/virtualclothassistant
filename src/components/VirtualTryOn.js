@@ -24,6 +24,9 @@ const createFallbackImage = () => {
 
 // Check if API key is available
 const isApiConfigured = () => {
+  // More detailed logging to debug API configuration
+  console.log('API Key:', config.api.key ? `${config.api.key.substring(0, 4)}...` : 'Not set');
+  console.log('API URL:', config.api.url);
   return config.api.key && config.api.key.length > 0;
 };
 
@@ -83,6 +86,7 @@ const VirtualTryOn = () => {
       const requestData = {
         model_image: modelBase64,
         cloth_image: clothBase64,
+        category: "Upper body", // Required parameter for Segmind API
         num_inference_steps: 35,
         guidance_scale: 2,
         seed: Math.floor(Math.random() * 1000000),
@@ -90,6 +94,8 @@ const VirtualTryOn = () => {
       };
       
       console.log('Sending request to API...', config.api.url);
+      console.log('API Key available:', !!config.api.key);
+      console.log('Request payload structure:', Object.keys(requestData));
       
       // Make the API request
       const response = await fetch(config.api.url, {
@@ -106,12 +112,18 @@ const VirtualTryOn = () => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error Response:', errorText);
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        
+        // Check for specific error messages
+        if (errorText.includes("No human detected")) {
+          throw new Error('No human detected in the model image. Please upload a clear image of a person.');
+        }
+        
+        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
       }
       
       // Handle JSON response
       const data = await response.json();
-      console.log('API response data:', data);
+      console.log('API response data structure:', Object.keys(data));
       
       let resultImageData;
       if (data && data.output) {
@@ -121,6 +133,7 @@ const VirtualTryOn = () => {
       } else if (data && data.images && data.images.length > 0) {
         resultImageData = `data:image/jpeg;base64,${data.images[0]}`;
       } else {
+        console.error('Invalid API response format:', data);
         throw new Error('Invalid response format from API');
       }
       
@@ -140,6 +153,10 @@ const VirtualTryOn = () => {
         errorMessage = 'API key not configured. Using example image.';
       } else if (err.message.includes('Failed to fetch')) {
         errorMessage = 'Network error. Check your connection.';
+      } else if (err.message.includes('No human detected')) {
+        errorMessage = 'No human detected in the model image. Please upload a clear image of a person.';
+      } else {
+        errorMessage = `API error: ${err.message}. Using example image.`;
       }
       
       setSnackbarMessage(errorMessage);

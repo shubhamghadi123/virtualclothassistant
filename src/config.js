@@ -23,6 +23,8 @@ if (process.env.NODE_ENV === 'development') {
     environment: config.environment,
     apiConfigured: !!config.api.key,
     apiUrl: config.api.url,
+    apiKeyPrefix: config.api.key ? config.api.key.substring(0, 3) : 'Not set',
+    apiKeyLength: config.api.key ? config.api.key.length : 0,
   });
 }
 
