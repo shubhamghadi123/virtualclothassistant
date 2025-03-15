@@ -53,16 +53,37 @@ const theme = createTheme({
 
 // ScrollToSection component to handle hash navigation
 const ScrollToSection = () => {
-  const { hash } = useLocation();
+  const { hash, pathname } = useLocation();
   
   useEffect(() => {
-    if (hash === '#how-it-works') {
+    // Only proceed if we have a hash and we're on the home page
+    if (hash && pathname === '/') {
+      // Remove the '#' character
+      const id = hash.replace('#', '');
+      
+      // Wait for DOM to be ready
       setTimeout(() => {
-        const element = document.getElementById('how-it-works');
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
+        const element = document.getElementById(id);
+        if (element) {
+          // Scroll to the element
+          element.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // Add focus for accessibility
+          element.setAttribute('tabindex', '-1');
+          element.focus({ preventScroll: true });
+          
+          // Add a class to highlight the section briefly
+          element.classList.add('highlight-section');
+          setTimeout(() => {
+            element.classList.remove('highlight-section');
+          }, 2000);
+        }
       }, 500);
     }
-  }, [hash]);
+  }, [hash, pathname]);
   
   return null;
 };
@@ -78,8 +99,24 @@ function App() {
 
   const handleOpenHowItWorks = () => {
     if (window.location.pathname === '/') {
+      // Improved scroll functionality
       const howItWorksSection = document.getElementById('how-it-works');
-      if (howItWorksSection) howItWorksSection.scrollIntoView({ behavior: 'smooth' });
+      if (howItWorksSection) {
+        // First ensure we're at the right URL
+        window.history.pushState({}, '', '/#how-it-works');
+        
+        // Then scroll with a slight delay to ensure DOM is ready
+        setTimeout(() => {
+          howItWorksSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // Add focus to the section for accessibility
+          howItWorksSection.setAttribute('tabindex', '-1');
+          howItWorksSection.focus({ preventScroll: true });
+        }, 100);
+      }
     } else {
       setShowHowItWorks(true);
     }

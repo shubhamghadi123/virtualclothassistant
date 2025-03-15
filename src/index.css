@@ -11,4 +11,19 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.highlight-section {
+  animation: highlight-fade 2s ease-out;
+}
+
+@keyframes highlight-fade {
+  0% {
+    background-color: rgba(98, 0, 234, 0.1);
+    box-shadow: 0 0 0 4px rgba(98, 0, 234, 0.1);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
 } 

@@ -272,7 +272,17 @@ const VirtualTryOn = () => {
         </Button>
       </Box>
       
-      <Box sx={{ mt: 4 }} id="how-it-works">
+      <Box 
+        sx={{ 
+          mt: 6, 
+          pt: 2,
+          pb: 4,
+          scrollMarginTop: '80px', // Add scroll margin to account for header
+          borderRadius: 2,
+          transition: 'all 0.3s ease'
+        }} 
+        id="how-it-works"
+      >
         <HowItWorks onClose={() => {}} />
       </Box>
       
