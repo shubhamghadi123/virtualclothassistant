@@ -22,14 +22,16 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
     item3: false
   });
   
-  // Calculate scaled font sizes
+  // Standardized font sizes regardless of modal state
   const fontSizes = {
-    h4: `${isModal ? 1.7 * scale : 1.8 * scale}rem`,
-    h5: `${isModal ? 1.4 * scale : 1.5 * scale}rem`,
-    h6: `${isModal ? 1.1 * scale : 1.2 * scale}rem`,
-    body: `${isModal ? 0.85 * scale : 0.9 * scale}rem`,
+    h4: `${1.8 * scale}rem`,
+    h5: `${1.5 * scale}rem`,
+    h6: `${1.2 * scale}rem`,
+    body: `${0.9 * scale}rem`,
   };
-  const iconSize = isModal ? 55 * scale : 60 * scale;
+  
+  // Standardized icon size
+  const iconSize = 60 * scale;
 
   // Content descriptions - using the same descriptions regardless of isModal
   const descriptions = {
@@ -62,7 +64,7 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
     justifyContent: 'center',
     fontSize: `${1.6 * scale}rem`,
     fontWeight: 'bold',
-    mb: isModal ? 1 : 1.5,
+    mb: 1.5,
   };
 
   const titleStyles = {
@@ -91,8 +93,8 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
           onMouseLeave={() => setHoveredItems(prev => ({ ...prev, [itemKey]: false }))}
           sx={{ 
             ...paperStyles,
-            p: { xs: isModal ? 1 : 1.5, md: isModal ? 1 : 2 },
-            borderTop: `${isModal ? 3 * scale : 4 * scale}px solid ${color}`,
+            p: { xs: 1.5, md: 2 },
+            borderTop: `${4 * scale}px solid ${color}`,
           }}
         >
           <Box 
@@ -123,7 +125,7 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
             color="text.secondary" 
             sx={{ 
               fontSize: fontSizes.body,
-              lineHeight: isModal ? 1.3 : 1.5
+              lineHeight: 1.5
             }}
           >
             {description}
@@ -151,7 +153,7 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
       <Paper 
         elevation={3} 
         sx={{ 
-          p: { xs: isModal ? 1.5 : 2, sm: isModal ? 1.5 : 2, md: isModal ? 1.5 : 3 }, 
+          p: { xs: 2, sm: 2, md: 3 }, 
           borderRadius: 2,
           position: 'relative',
           overflow: 'hidden',
@@ -174,7 +176,7 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
           sx={{ 
             fontWeight: 700,
             color: theme.palette.primary.main,
-            mb: isModal ? 1 : 3,
+            mb: 3,
             position: 'relative',
             fontSize: fontSizes.h4,
             '&::after': {
@@ -183,8 +185,8 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
               bottom: '-8px',
               left: '50%',
               transform: 'translateX(-50%)',
-              width: `${isModal ? 80 * scale : 90 * scale}px`,
-              height: `${isModal ? 2 * scale : 3 * scale}px`,
+              width: `${90 * scale}px`,
+              height: `${3 * scale}px`,
               background: `linear-gradient(90deg, ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
               borderRadius: '3px',
             }
@@ -209,15 +211,15 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
           Experience clothes virtually before you buy with our AI technology
         </Typography>
         
-        <Grid container spacing={{ xs: isModal ? 1 : 2, md: isModal ? 1.5 : 3 }} sx={{ mb: { xs: isModal ? 1 : 2, md: isModal ? 1.5 : 3 }, flexGrow: isModal ? 1 : 0 }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: { xs: 2, md: 3 }, flexGrow: isModal ? 1 : 0 }}>
           {renderStep(1, "Upload Model Image", descriptions.model, theme.palette.primary.main, 
-            <PersonIcon fontSize={isModal ? "medium" : "large"} />)}
+            <PersonIcon fontSize="large" />)}
           
           {renderStep(2, "Upload Clothing Item", descriptions.cloth, theme.palette.secondary.main, 
-            <CheckroomIcon fontSize={isModal ? "medium" : "large"} />)}
+            <CheckroomIcon fontSize="large" />)}
           
           {renderStep(3, "Generate Try-On", descriptions.generate, theme.palette.primary.main, 
-            <AutoAwesomeIcon fontSize={isModal ? "medium" : "large"} />)}
+            <AutoAwesomeIcon fontSize="large" />)}
         </Grid>
         
         <Paper 
@@ -295,7 +297,7 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
                 minWidth: '160px',
                 fontWeight: 600,
                 fontSize: fontSizes.body,
-                py: isModal ? 0.75 : 1
+                py: 1
               }}
             >
               Get Started
