@@ -330,10 +330,13 @@ const VirtualTryOn = () => {
         </Button>
       </Box>
       
+      {/* Subtle divider to maintain visual separation */}
+      <Divider sx={{ mt: 3, width: '50%', mx: 'auto', opacity: 0.5 }} />
+      
       <Box 
         ref={howItWorksRef}
         sx={{ 
-          mt: 6, 
+          mt: 3, // Reduced from mt: 6 to decrease the distance
           pt: 2,
           pb: 4,
           scrollMarginTop: '80px', // Add scroll margin to account for header
