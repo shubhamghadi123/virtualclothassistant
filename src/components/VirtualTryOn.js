@@ -22,6 +22,11 @@ const createFallbackImage = () => {
   return `https://placehold.co/600x800/e2e8f0/1e293b?text=Example+try+on`;
 };
 
+// Check if API key is available
+const isApiConfigured = () => {
+  return config.api.key && config.api.key.length > 0;
+};
+
 const VirtualTryOn = () => {
   const [modelImage, setModelImage] = useState(null);
   const [clothImage, setClothImage] = useState(null);
@@ -49,11 +54,6 @@ const VirtualTryOn = () => {
     setApiStatus('idle');
   };
 
-  // Function to generate a mock response when API fails
-  const generateMockResponse = () => {
-    return createFallbackImage();
-  };
-
   const handleGenerateResult = async () => {
     if (!modelImage || !clothImage) {
       setError('Please upload both model and cloth images.');
@@ -69,6 +69,12 @@ const VirtualTryOn = () => {
       setSnackbarSeverity('info');
       setSnackbarOpen(true);
       
+      // Check if API key is configured
+      if (!isApiConfigured()) {
+        console.warn('API key not configured. Using fallback image.');
+        throw new Error('API key not configured');
+      }
+      
       // Extract base64 data from the data URLs
       const modelBase64 = modelImage.split(',')[1];
       const clothBase64 = clothImage.split(',')[1];
@@ -83,7 +89,7 @@ const VirtualTryOn = () => {
         base64: true
       };
       
-      console.log('Sending request to API...');
+      console.log('Sending request to API...', config.api.url);
       
       // Make the API request
       const response = await fetch(config.api.url, {
@@ -127,35 +133,57 @@ const VirtualTryOn = () => {
       
     } catch (err) {
       console.error('API Error:', err);
-      setSnackbarMessage('API error. Using example image.');
+      
+      // More descriptive error message
+      let errorMessage = 'API error. Using example image.';
+      if (err.message.includes('API key not configured')) {
+        errorMessage = 'API key not configured. Using example image.';
+      } else if (err.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error. Check your connection.';
+      }
+      
+      setSnackbarMessage(errorMessage);
       setSnackbarSeverity('warning');
       setSnackbarOpen(true);
       
-      const mockImageUrl = generateMockResponse();
-      
-      try {
-        if (mockImageUrl.startsWith('data:')) {
-          setResultImage(mockImageUrl);
-        } else {
-          fetch(mockImageUrl)
-            .then(response => response.blob())
-            .then(blob => {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setResultImage(reader.result);
-                setIsLoading(false);
-                setApiStatus('success');
-              };
-              reader.readAsDataURL(blob);
-            });
-        }
-      } catch (mockError) {
-        console.error('Mock image generation failed:', mockError);
-        setError('Unable to generate any result. Please try again later.');
-        setApiStatus('error');
-      } finally {
+      // Use fallback image
+      useFallbackImage();
+    }
+  };
+  
+  // Separate function to handle fallback image logic
+  const useFallbackImage = () => {
+    const mockImageUrl = createFallbackImage();
+    
+    try {
+      if (mockImageUrl.startsWith('data:')) {
+        setResultImage(mockImageUrl);
         setIsLoading(false);
+        setApiStatus('success');
+      } else {
+        fetch(mockImageUrl)
+          .then(response => response.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setResultImage(reader.result);
+              setIsLoading(false);
+              setApiStatus('success');
+            };
+            reader.readAsDataURL(blob);
+          })
+          .catch(error => {
+            console.error('Fallback image loading failed:', error);
+            setError('Unable to generate any result. Please try again later.');
+            setApiStatus('error');
+            setIsLoading(false);
+          });
       }
+    } catch (mockError) {
+      console.error('Mock image generation failed:', mockError);
+      setError('Unable to generate any result. Please try again later.');
+      setApiStatus('error');
+      setIsLoading(false);
     }
   };
 
