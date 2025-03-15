@@ -3,7 +3,7 @@ const config = {
   // API configuration
   api: {
     key: process.env.REACT_APP_API_KEY || '',
-    url: process.env.REACT_APP_API_URL || '',
+    url: process.env.REACT_APP_API_URL || 'https://api.segmind.com/v1/try-on-diffusion',
   },
   
   // Environment

@@ -15,10 +15,7 @@ import ImageUploadBox from './ImageUploadBox';
 import ResultBox from './ResultBox';
 import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-
-// API configuration for Segmind
-const API_KEY = process.env.REACT_APP_API_KEY || 'SG_9be9068dab0742d3';
-const API_URL = process.env.REACT_APP_API_URL || 'https://api.segmind.com/v1/try-on-diffusion';
+import config from '../config';
 
 // Create a fallback image function outside of component
 const createFallbackImage = () => {
@@ -89,11 +86,11 @@ const VirtualTryOn = () => {
       console.log('Sending request to API...');
       
       // Make the API request
-      const response = await fetch(API_URL, {
+      const response = await fetch(config.api.url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY
+          'x-api-key': config.api.key
         },
         body: JSON.stringify(requestData)
       });
