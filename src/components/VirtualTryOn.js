@@ -248,7 +248,13 @@ const VirtualTryOn = () => {
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container 
+      maxWidth="xl" 
+      sx={{
+        overflow: 'visible', // Allow content to overflow for scrolling
+        height: 'auto', // Let content determine height
+      }}
+    >
       <Box sx={{ mb: 4, textAlign: 'center' }}>
         <Typography 
           variant="h3" 
@@ -337,7 +343,9 @@ const VirtualTryOn = () => {
           transformOrigin: 'center top', // Keep the scaling centered
           width: '100%', // Ensure the container takes full width
           mx: 'auto', // Center the container
-          maxWidth: '95%' // Prevent overflow issues
+          maxWidth: '95%', // Prevent overflow issues
+          overflow: 'visible', // Allow content to be visible for scrolling
+          height: 'auto', // Let content determine height
         }} 
         id="how-it-works"
       >

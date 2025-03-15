@@ -134,7 +134,14 @@ function App() {
       <AuthProvider>
         <Router>
           <ScrollToSection />
-          <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <Box 
+            sx={{ 
+              minHeight: '100vh', 
+              display: 'flex', 
+              flexDirection: 'column',
+              overflow: 'visible', // Allow content to overflow for scrolling
+            }}
+          >
             <Header onHowItWorksClick={handleOpenHowItWorks} />
             
             <Routes>
@@ -145,7 +152,15 @@ function App() {
                 <Route 
                   path="/" 
                   element={
-                    <Container maxWidth="lg" sx={{ flexGrow: 1, py: 4 }}>
+                    <Container 
+                      maxWidth="lg" 
+                      sx={{ 
+                        flexGrow: 1, 
+                        py: 4,
+                        overflow: 'visible', // Allow content to overflow for scrolling
+                        height: 'auto', // Let content determine height
+                      }}
+                    >
                       <VirtualTryOn />
                     </Container>
                   } 

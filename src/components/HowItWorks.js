@@ -136,9 +136,10 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
     px: isModal ? 0 : 2,
     transform: `scale(${scale})`,
     transformOrigin: 'center top',
-    height: isModal ? '100%' : 'auto',
+    height: 'auto',
     display: 'flex',
     flexDirection: 'column',
+    overflow: 'visible',
   };
 
   // Main paper styles
@@ -146,7 +147,7 @@ const HowItWorks = ({ onClose, isModal = false, scale = 1 }) => {
     p: { xs: 2, sm: 2, md: 3 }, 
     borderRadius: 2,
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'visible',
     flexGrow: isModal ? 1 : 0,
     display: 'flex',
     flexDirection: 'column',
