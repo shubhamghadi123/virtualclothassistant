@@ -310,7 +310,7 @@ const VirtualTryOn = () => {
         </Grid>
       </Grid>
       
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
         <Button
           variant="contained"
           color="primary"
@@ -330,13 +330,10 @@ const VirtualTryOn = () => {
         </Button>
       </Box>
       
-      {/* Subtle divider to maintain visual separation */}
-      <Divider sx={{ mt: 3, width: '50%', mx: 'auto', opacity: 0.5 }} />
-      
       <Box 
         ref={howItWorksRef}
         sx={{ 
-          mt: 3, // Reduced from mt: 6 to decrease the distance
+          mt: -1, // Reduced from mt: 6 to decrease the distance
           pt: 2,
           pb: 4,
           scrollMarginTop: '80px', // Add scroll margin to account for header
@@ -346,7 +343,7 @@ const VirtualTryOn = () => {
           transformOrigin: 'center top', // Keep the scaling centered
           width: '100%', // Ensure the container takes full width
           mx: 'auto', // Center the container
-          maxWidth: '95%', // Prevent overflow issues
+          maxWidth: '90%', // Prevent overflow issues
           overflow: 'visible', // Allow content to be visible for scrolling
           height: 'auto', // Let content determine height
         }} 

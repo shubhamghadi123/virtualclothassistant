@@ -18,56 +18,18 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownload, onShare }) => {
   const theme = useTheme();
-  const borderColor = theme.palette.primary.main;
+  const borderColor = theme.palette.success.main;
   const [isHovered, setIsHovered] = useState(false);
   const boxRef = useRef(null);
 
-  const handleDownload = () => {
-    if (!resultImage) return;
-    onDownload();
-  };
-
-  const handleShare = () => {
-    if (!resultImage) return;
-    onShare();
-  };
-
-  // Get status chip based on apiStatus
   const getStatusChip = () => {
     switch (apiStatus) {
       case 'loading':
-        return (
-          <Chip 
-            label="Processing..." 
-            color="primary" 
-            size="small" 
-            sx={{ position: 'absolute', top: 16, right: 16 }}
-          />
-        );
+        return <Chip label="Processing..." color="primary" size="small" sx={{ position: 'absolute', top: 16, right: 16 }} />;
       case 'success':
-        return (
-          <Zoom in={true}>
-            <Chip 
-              icon={<CheckCircleIcon />} 
-              label="Success" 
-              color="success" 
-              size="small" 
-              sx={{ position: 'absolute', top: 16, right: 16 }}
-            />
-          </Zoom>
-        );
+        return <Zoom in><Chip icon={<CheckCircleIcon />} label="Success" color="success" size="small" sx={{ position: 'absolute', top: 16, right: 16 }} /></Zoom>;
       case 'error':
-        return (
-          <Zoom in={true}>
-            <Chip 
-              icon={<ErrorIcon />} 
-              label="Error" 
-              color="error" 
-              size="small" 
-              sx={{ position: 'absolute', top: 16, right: 16 }}
-            />
-          </Zoom>
-        );
+        return <Zoom in><Chip icon={<ErrorIcon />} label="Error" color="error" size="small" sx={{ position: 'absolute', top: 16, right: 16 }} /></Zoom>;
       default:
         return null;
     }
@@ -76,36 +38,23 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
   return (
     <Paper 
       ref={boxRef}
-      elevation={3} 
+      elevation={4} 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       sx={{ 
         p: 3, 
         borderTop: `4px solid ${borderColor}`,
+        borderRadius: 3,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.3s ease-in-out',
         position: 'relative',
         overflow: 'hidden',
         '&:hover': {
-          boxShadow: theme.shadows[8],
+          boxShadow: theme.shadows[10],
           transform: 'translateY(-5px)',
         },
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '5px',
-          background: borderColor,
-          transform: 'scaleX(0.97)',
-          transition: 'transform 0.3s ease',
-        },
-        '&:hover::before': {
-          transform: 'scaleX(1)',
-        }
       }}
     >
       {getStatusChip()}
@@ -114,32 +63,27 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
         <Typography 
           variant="h6" 
           sx={{ 
-            color: borderColor,
+            fontWeight: 600, 
+            color: borderColor, 
             position: 'relative',
             display: 'inline-block',
-            fontWeight: 600,
-            transition: 'all 0.3s ease',
+            mb: 1.5,
             '&::after': {
               content: '""',
               position: 'absolute',
-              bottom: -4,
               left: 0,
-              width: isHovered || resultImage ? '100%' : '40px',
+              bottom: -2,
+              width: isHovered ? '100%' : '25%',
               height: '2px',
               backgroundColor: borderColor,
-              borderRadius: '2px',
-              transition: 'width 0.3s ease',
-            }
+              transition: 'width 0.3s ease-in-out',
+            },
           }}
         >
           Result Preview
         </Typography>
         
-        <Typography 
-          variant="body2" 
-          color="text.secondary" 
-          sx={{ mt: 1 }}
-        >
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
           {resultImage ? 'Your virtual try-on result' : 'Your result will appear here'}
         </Typography>
       </Box>
@@ -148,7 +92,7 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
         sx={{ 
           border: resultImage ? 'none' : '2px dashed',
           borderColor: 'divider',
-          borderRadius: 2,
+          borderRadius: '12px',  // 🟢 Consistent with the container
           p: 4,
           textAlign: 'center',
           minHeight: 350,
@@ -162,13 +106,6 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
           '&:hover': {
             backgroundColor: resultImage ? 'transparent' : `${borderColor}05`,
             borderColor: resultImage ? 'transparent' : borderColor,
-            '& .result-icon': {
-              transform: 'scale(1.1)',
-              opacity: 0.9
-            },
-            '& .result-text': {
-              color: borderColor
-            }
           }
         }}
       >
@@ -194,23 +131,14 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
               maxWidth: '100%', 
               maxHeight: '350px',
               objectFit: 'contain',
-              borderRadius: '8px',
+              borderRadius: '12px',  // 🟢 Ensure image matches container
               transition: 'all 0.2s ease',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
             }}
           />
         ) : (
           <>
             <Box 
-              className="result-icon"
               sx={{ 
                 width: 80,
                 height: 80,
@@ -221,24 +149,11 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
                 fontSize: '3rem',
                 color: borderColor,
                 opacity: 0.7,
-                filter: `drop-shadow(0 4px 6px ${borderColor}30)`,
-                transition: 'all 0.3s ease',
               }}
             >
               🖼️
             </Box>
-            
-            <Typography 
-              className="result-text"
-              variant="body1" 
-              sx={{
-                color: 'text.hint',
-                fontSize: '1rem',
-                textAlign: 'center',
-                lineHeight: 1.6,
-                transition: 'color 0.2s ease',
-              }}
-            >
+            <Typography variant="body1" sx={{ color: 'text.hint', fontSize: '1rem', textAlign: 'center', lineHeight: 1.6 }}>
               Upload model and clothing images,<br />
               then click "Generate"
             </Typography>
@@ -261,9 +176,9 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
             variant="outlined"
             color="primary"
             startIcon={<DownloadIcon />}
-            onClick={handleDownload}
+            onClick={onDownload}
             sx={{
-              borderRadius: '20px',
+              borderRadius: '20px',  // 🟢 Rounded buttons
               transition: 'all 0.2s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
@@ -281,9 +196,9 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
             variant="outlined"
             color="secondary"
             startIcon={<ShareIcon />}
-            onClick={handleShare}
+            onClick={onShare}
             sx={{
-              borderRadius: '20px',
+              borderRadius: '20px',  // 🟢 Rounded buttons
               transition: 'all 0.2s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
@@ -303,4 +218,4 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
   );
 };
 
-export default ResultBox; 
+export default ResultBox;
