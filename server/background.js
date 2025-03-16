@@ -14,13 +14,14 @@ const serverPath = path.join(__dirname, 'start.js');
 // Path to the log file
 const logPath = path.join(__dirname, 'server.log');
 
-// Create a log file stream
-const logStream = fs.createWriteStream(logPath, { flags: 'a' });
+// Open the log file
+const out = fs.openSync(logPath, 'a');
+const err = fs.openSync(logPath, 'a');
 
 // Spawn the server process
 const server = spawn('node', [serverPath], {
   detached: true,
-  stdio: ['ignore', logStream, logStream]
+  stdio: ['ignore', out, err]
 });
 
 // Unref the child process so the parent can exit
