@@ -173,7 +173,7 @@ const ImageUploadBox = ({ title, description, onImageUpload, boxType }) => {
 
       {image && (
         <Fade in={true}>
-          <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 2 }}>
+          <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 11 }}>
             <Button
               variant="outlined"
               color="error"

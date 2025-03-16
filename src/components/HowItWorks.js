@@ -27,19 +27,19 @@ const HowItWorks = ({ onClose, isModal = false }) => {
   const steps = [
     {
       title: "Upload Model Image",
-      description: "Upload a full-body photo with good lighting for the best results.",
+      description: "Upload a full-body photo of a person standing in a neutral pose. For best results, use a clear image with good lighting and a simple background.",
       color: theme.palette.primary.main,
       icon: <PersonIcon fontSize="large" />
     },
     {
       title: "Upload Clothing Item",
-      description: "Choose a clear image of the clothing you want to try on.",
+      description: "Upload an image of the clothing item you want to try on. The image should show the entire garment clearly against a plain background.",
       color: theme.palette.secondary.main,
       icon: <CheckroomIcon fontSize="large" />
     },
     {
       title: "Generate Try-On",
-      description: "Our AI will generate a realistic preview in seconds.",
+      description: "Click the Generate Try-On button and our AI will process your images. In seconds, you'll see a realistic preview of how the clothing would look on the model.",
       color: theme.palette.success.main,
       icon: <AutoAwesomeIcon fontSize="large" />
     }
@@ -108,6 +108,11 @@ const HowItWorks = ({ onClose, isModal = false }) => {
                       borderTop: `4px solid ${color}`,
                       boxShadow: `0px 4px 12px ${color}50`,
                       transition: "all 0.3s",
+                      height: "270px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                       "&:hover": {
                         transform: "translateY(-6px)",
                         boxShadow: `0px 8px 20px ${color}80`,
@@ -143,6 +148,7 @@ const HowItWorks = ({ onClose, isModal = false }) => {
                     <Typography 
                       variant="body2" 
                       color="text.secondary"
+                      sx={{ flexGrow: 1 }}
                     >
                       {description}
                     </Typography>
@@ -180,7 +186,11 @@ const HowItWorks = ({ onClose, isModal = false }) => {
                 The Technology Behind It
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                Our AI analyzes images and generates a realistic virtual try-on experience.
+                Our Virtual Cloth Try-On uses advanced computer vision and deep learning algorithms to 
+                analyze both the model and clothing images. The system identifies body posture, 
+                measurements, and clothing characteristics to create a realistic visualization of how 
+                the garment would fit on the person. This technology helps shoppers make more confident 
+                purchasing decisions without physically trying on clothes.
               </Typography>
             </Paper>
           </motion.div>
