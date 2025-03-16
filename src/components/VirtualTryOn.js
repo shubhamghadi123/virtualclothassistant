@@ -98,12 +98,20 @@ const VirtualTryOn = () => {
       
       // More descriptive error message
       let errorMessage = 'Error generating result. Using example image.';
+      let useFallback = true;
+      
       if (err.message.includes('API key not configured')) {
         errorMessage = 'API key not configured. Using example image.';
       } else if (err.message.includes('Failed to fetch')) {
         errorMessage = 'Network error. Check your connection.';
       } else if (err.message.includes('No human detected')) {
         errorMessage = 'No human detected in the model image. Please upload a clear image of a person.';
+      } else if (err.message.includes('Insufficient credits')) {
+        errorMessage = 'Your Segmind account has insufficient credits. Please add credits to your account.';
+        useFallback = true;
+      } else if (err.message.includes('Invalid image format')) {
+        errorMessage = 'Invalid image format. Please upload a different image.';
+        useFallback = false;
       } else {
         errorMessage = `Error: ${err.message}. Using example image.`;
       }
@@ -112,8 +120,14 @@ const VirtualTryOn = () => {
       setSnackbarSeverity('warning');
       setSnackbarOpen(true);
       
-      // Use fallback image
-      loadFallbackImage();
+      // Use fallback image if appropriate
+      if (useFallback) {
+        loadFallbackImage();
+      } else {
+        setIsLoading(false);
+        setApiStatus('error');
+        setError(errorMessage);
+      }
     }
   };
   
@@ -163,9 +177,13 @@ const VirtualTryOn = () => {
       // Check for specific error messages
       if (errorText.includes("No human detected")) {
         throw new Error('No human detected in the model image. Please upload a clear image of a person.');
+      } else if (errorText.includes("Insufficient credits")) {
+        throw new Error('Your Segmind account has insufficient credits. Please add credits to your account.');
+      } else if (errorText.includes("Invalid Model Image") || errorText.includes("Invalid Cloth Image")) {
+        throw new Error('Invalid image format. Please upload a different image.');
       }
       
-      throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
     
     // Handle JSON response
