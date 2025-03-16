@@ -13,7 +13,6 @@
     "express": "^4.19.2",
     "framer-motion": "^12.5.0",
     "node-fetch": "^2.7.0",
-    "playwright": "^1.42.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
@@ -26,10 +25,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --passWithNoTests",
-    "eject": "react-scripts eject",
-    "start-server": "node server/start.js",
-    "start-server-bg": "node server/background.js",
-    "dev": "concurrently \"npm run start\" \"npm run start-server\""
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

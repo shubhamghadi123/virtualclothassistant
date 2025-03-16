@@ -18,7 +18,6 @@ import ResultBox from './ResultBox';
 import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import config from '../config';
-import automationService from '../services/automationService';
 
 // Create a fallback image function outside of component
 const createFallbackImage = () => {
@@ -43,8 +42,6 @@ const VirtualTryOn = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('info');
-  const [useAutomation, setUseAutomation] = useState(false);
-  const [isAutomationAvailable, setIsAutomationAvailable] = useState(false);
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -57,22 +54,6 @@ const VirtualTryOn = () => {
     if (howItWorksRef.current) {
       console.log('How It Works section mounted with ID:', howItWorksRef.current.id);
     }
-  }, []);
-
-  // Check if automation server is running
-  useEffect(() => {
-    const checkAutomationServer = async () => {
-      try {
-        const isRunning = await automationService.isServerRunning();
-        setIsAutomationAvailable(isRunning);
-        console.log('Automation server is', isRunning ? 'available' : 'not available');
-      } catch (error) {
-        console.error('Error checking automation server:', error);
-        setIsAutomationAvailable(false);
-      }
-    };
-    
-    checkAutomationServer();
   }, []);
 
   const handleImageUpload = (image, type) => {
@@ -103,26 +84,7 @@ const VirtualTryOn = () => {
       setSnackbarSeverity('info');
       setSnackbarOpen(true);
       
-      let resultImageData;
-      
-      // If automation is enabled and available, use it
-      if (useAutomation && isAutomationAvailable) {
-        console.log('Using automation service for virtual try-on');
-        try {
-          resultImageData = await automationService.virtualTryOn(modelImage, clothImage);
-        } catch (automationError) {
-          console.error('Automation service failed:', automationError);
-          setSnackbarMessage('Automation service failed. Falling back to API...');
-          setSnackbarSeverity('warning');
-          setSnackbarOpen(true);
-          
-          // Fall back to API
-          resultImageData = await generateWithAPI();
-        }
-      } else {
-        // Use API
-        resultImageData = await generateWithAPI();
-      }
+      const resultImageData = await generateWithAPI();
       
       setResultImage(resultImageData);
       setSnackbarMessage('Virtual try-on generated successfully!');
@@ -279,11 +241,6 @@ const VirtualTryOn = () => {
     }
   };
 
-  // Toggle automation
-  const handleToggleAutomation = () => {
-    setUseAutomation(prev => !prev);
-  };
-
   return (
     <Container 
       maxWidth="xl" 
@@ -312,31 +269,6 @@ const VirtualTryOn = () => {
         <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
           Upload a model image and a cloth image to see how the clothing would look on the model.
         </Typography>
-        
-        {isAutomationAvailable && (
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Button
-              variant="outlined"
-              color={useAutomation ? "success" : "primary"}
-              size="small"
-              onClick={handleToggleAutomation}
-              sx={{ 
-                borderRadius: 4,
-                textTransform: 'none',
-                px: 2,
-                py: 0.5,
-                fontSize: '0.85rem'
-              }}
-            >
-              {useAutomation ? "Using Hugging Face (Faster)" : "Using API (Default)"}
-            </Button>
-            <Tooltip title="Toggle between using the Hugging Face automation or the default API">
-              <Box component="span" sx={{ ml: 1, cursor: 'help', color: 'text.secondary' }}>
-                ℹ️
-              </Box>
-            </Tooltip>
-          </Box>
-        )}
         
         <Divider sx={{ mb: 4 }} />
       </Box>
