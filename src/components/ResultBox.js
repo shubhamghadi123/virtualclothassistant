@@ -12,11 +12,10 @@ import {
   Stack
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import ShareIcon from '@mui/icons-material/Share';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownload, onShare }) => {
+const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownload }) => {
   const theme = useTheme();
   const borderColor = theme.palette.success.main;
   const [isHovered, setIsHovered] = useState(false);
@@ -83,7 +82,7 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
           Result Preview
         </Typography>
         
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.3 }}>
           {resultImage ? 'Your virtual try-on result' : 'Your result will appear here'}
         </Typography>
       </Box>
@@ -192,26 +191,6 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
             }}
           >
             Download
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            startIcon={<ShareIcon />}
-            onClick={onShare}
-            sx={{
-              borderRadius: '20px',  // 🟢 Rounded buttons
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-              },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
-              }
-            }}
-          >
-            Share
           </Button>
         </Stack>
       </Fade>

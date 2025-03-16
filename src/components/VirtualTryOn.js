@@ -11,13 +11,11 @@ import {
   Snackbar,
   Container,
   CircularProgress,
-  Chip,
 } from '@mui/material';
 import ImageUploadBox from './ImageUploadBox';
 import ResultBox from './ResultBox';
 import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import config from '../config';
 
 // Create a fallback image function outside of component
@@ -235,21 +233,6 @@ const VirtualTryOn = () => {
     }
   };
 
-  const handleShareResult = () => {
-    if (resultImage && navigator.share) {
-      // Use Web Share API if available
-      navigator.share({
-        title: 'My Virtual Try-On Result',
-        text: 'Check out my virtual try-on result!',
-        url: resultImage,
-      })
-      .catch((error) => console.log('Error sharing:', error));
-    } else {
-      // Fallback for browsers that don't support the Web Share API
-      alert('Sharing is not supported in your browser. You can download the image instead.');
-    }
-  };
-
   return (
     <Container 
       maxWidth="xl" 
@@ -308,7 +291,6 @@ const VirtualTryOn = () => {
             error={error}
             apiStatus={apiStatus}
             onDownload={handleDownloadResult}
-            onShare={handleShareResult}
           />
         </Grid>
       </Grid>
@@ -370,53 +352,6 @@ const VirtualTryOn = () => {
             'Generate Try-On'
           )}
         </Button>
-      </Box>
-      
-      {/* Feature list for the Generate Try-On button */}
-      <Box sx={{ 
-        mt: 2, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center',
-        p: 2,
-        borderRadius: 2,
-        bgcolor: 'rgba(0, 0, 0, 0.02)',
-        maxWidth: '600px',
-        mx: 'auto'
-      }}>
-        <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-          Button Features:
-        </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
-          <Chip 
-            icon={<CheckCircleOutlineIcon fontSize="small" />} 
-            label="Initially Disabled" 
-            size="small" 
-            variant="outlined" 
-            color="primary"
-          />
-          <Chip 
-            icon={<CheckCircleOutlineIcon fontSize="small" />} 
-            label="Enables when Both Images are Uploaded" 
-            size="small" 
-            variant="outlined" 
-            color="primary"
-          />
-          <Chip 
-            icon={<CheckCircleOutlineIcon fontSize="small" />} 
-            label="Loading State while Processing" 
-            size="small" 
-            variant="outlined" 
-            color="primary"
-          />
-          <Chip 
-            icon={<CheckCircleOutlineIcon fontSize="small" />} 
-            label="Glowing Effect when Active" 
-            size="small" 
-            variant="outlined" 
-            color="primary"
-          />
-        </Box>
       </Box>
 
       <Box 
