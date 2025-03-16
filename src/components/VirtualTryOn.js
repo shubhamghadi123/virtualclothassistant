@@ -11,12 +11,14 @@ import {
   Snackbar,
   Container,
   CircularProgress,
+  Tooltip,
 } from '@mui/material';
 import ImageUploadBox from './ImageUploadBox';
 import ResultBox from './ResultBox';
 import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import config from '../config';
+import automationService from '../services/automationService';
 
 // Create a fallback image function outside of component
 const createFallbackImage = () => {
@@ -41,6 +43,8 @@ const VirtualTryOn = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const [useAutomation, setUseAutomation] = useState(false);
+  const [isAutomationAvailable, setIsAutomationAvailable] = useState(false);
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -53,6 +57,22 @@ const VirtualTryOn = () => {
     if (howItWorksRef.current) {
       console.log('How It Works section mounted with ID:', howItWorksRef.current.id);
     }
+  }, []);
+
+  // Check if automation server is running
+  useEffect(() => {
+    const checkAutomationServer = async () => {
+      try {
+        const isRunning = await automationService.isServerRunning();
+        setIsAutomationAvailable(isRunning);
+        console.log('Automation server is', isRunning ? 'available' : 'not available');
+      } catch (error) {
+        console.error('Error checking automation server:', error);
+        setIsAutomationAvailable(false);
+      }
+    };
+    
+    checkAutomationServer();
   }, []);
 
   const handleImageUpload = (image, type) => {
@@ -83,69 +103,25 @@ const VirtualTryOn = () => {
       setSnackbarSeverity('info');
       setSnackbarOpen(true);
       
-      // Check if API key is configured
-      if (!isApiConfigured()) {
-        console.warn('API key not configured. Using fallback image.');
-        throw new Error('API key not configured');
-      }
-      
-      // Extract base64 data from the data URLs
-      const modelBase64 = modelImage.split(',')[1];
-      const clothBase64 = clothImage.split(',')[1];
-      
-      // Prepare the request payload
-      const requestData = {
-        model_image: modelBase64,
-        cloth_image: clothBase64,
-        category: "Upper body", // Required parameter for Segmind API
-        num_inference_steps: 35,
-        guidance_scale: 2,
-        seed: Math.floor(Math.random() * 1000000),
-        base64: true
-      };
-      
-      console.log('Sending request to API...', config.api.url);
-      console.log('API Key available:', !!config.api.key);
-      console.log('Request payload structure:', Object.keys(requestData));
-      
-      // Make the API request
-      const response = await fetch(config.api.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': config.api.key
-        },
-        body: JSON.stringify(requestData)
-      });
-      
-      console.log('API response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error Response:', errorText);
-        
-        // Check for specific error messages
-        if (errorText.includes("No human detected")) {
-          throw new Error('No human detected in the model image. Please upload a clear image of a person.');
-        }
-        
-        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-      
-      // Handle JSON response
-      const data = await response.json();
-      console.log('API response data structure:', Object.keys(data));
-      
       let resultImageData;
-      if (data && data.output) {
-        resultImageData = `data:image/jpeg;base64,${data.output}`;
-      } else if (data && data.image) {
-        resultImageData = `data:image/jpeg;base64,${data.image}`;
-      } else if (data && data.images && data.images.length > 0) {
-        resultImageData = `data:image/jpeg;base64,${data.images[0]}`;
+      
+      // If automation is enabled and available, use it
+      if (useAutomation && isAutomationAvailable) {
+        console.log('Using automation service for virtual try-on');
+        try {
+          resultImageData = await automationService.virtualTryOn(modelImage, clothImage);
+        } catch (automationError) {
+          console.error('Automation service failed:', automationError);
+          setSnackbarMessage('Automation service failed. Falling back to API...');
+          setSnackbarSeverity('warning');
+          setSnackbarOpen(true);
+          
+          // Fall back to API
+          resultImageData = await generateWithAPI();
+        }
       } else {
-        console.error('Invalid API response format:', data);
-        throw new Error('Invalid response format from API');
+        // Use API
+        resultImageData = await generateWithAPI();
       }
       
       setResultImage(resultImageData);
@@ -156,10 +132,10 @@ const VirtualTryOn = () => {
       setIsLoading(false);
       
     } catch (err) {
-      console.error('API Error:', err);
+      console.error('Generation Error:', err);
       
       // More descriptive error message
-      let errorMessage = 'API error. Using example image.';
+      let errorMessage = 'Error generating result. Using example image.';
       if (err.message.includes('API key not configured')) {
         errorMessage = 'API key not configured. Using example image.';
       } else if (err.message.includes('Failed to fetch')) {
@@ -167,7 +143,7 @@ const VirtualTryOn = () => {
       } else if (err.message.includes('No human detected')) {
         errorMessage = 'No human detected in the model image. Please upload a clear image of a person.';
       } else {
-        errorMessage = `API error: ${err.message}. Using example image.`;
+        errorMessage = `Error: ${err.message}. Using example image.`;
       }
       
       setSnackbarMessage(errorMessage);
@@ -177,6 +153,76 @@ const VirtualTryOn = () => {
       // Use fallback image
       loadFallbackImage();
     }
+  };
+  
+  // Function to generate result using API
+  const generateWithAPI = async () => {
+    // Check if API key is configured
+    if (!isApiConfigured()) {
+      console.warn('API key not configured. Using fallback image.');
+      throw new Error('API key not configured');
+    }
+    
+    // Extract base64 data from the data URLs
+    const modelBase64 = modelImage.split(',')[1];
+    const clothBase64 = clothImage.split(',')[1];
+    
+    // Prepare the request payload
+    const requestData = {
+      model_image: modelBase64,
+      cloth_image: clothBase64,
+      category: "Upper body", // Required parameter for Segmind API
+      num_inference_steps: 35,
+      guidance_scale: 2,
+      seed: Math.floor(Math.random() * 1000000),
+      base64: true
+    };
+    
+    console.log('Sending request to API...', config.api.url);
+    console.log('API Key available:', !!config.api.key);
+    console.log('Request payload structure:', Object.keys(requestData));
+    
+    // Make the API request
+    const response = await fetch(config.api.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': config.api.key
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    console.log('API response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      
+      // Check for specific error messages
+      if (errorText.includes("No human detected")) {
+        throw new Error('No human detected in the model image. Please upload a clear image of a person.');
+      }
+      
+      throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+    
+    // Handle JSON response
+    const data = await response.json();
+    console.log('API response data structure:', Object.keys(data));
+    
+    let resultImageData;
+    if (data && data.output) {
+      resultImageData = `data:image/jpeg;base64,${data.output}`;
+    } else if (data && data.image) {
+      resultImageData = `data:image/jpeg;base64,${data.image}`;
+    } else if (data && data.images && data.images.length > 0) {
+      resultImageData = `data:image/jpeg;base64,${data.images[0]}`;
+    } else {
+      console.error('Invalid API response format:', data);
+      throw new Error('Invalid response format from API');
+    }
+    
+    return resultImageData;
   };
   
   // Separate function to handle fallback image logic
@@ -233,6 +279,11 @@ const VirtualTryOn = () => {
     }
   };
 
+  // Toggle automation
+  const handleToggleAutomation = () => {
+    setUseAutomation(prev => !prev);
+  };
+
   return (
     <Container 
       maxWidth="xl" 
@@ -261,6 +312,31 @@ const VirtualTryOn = () => {
         <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
           Upload a model image and a cloth image to see how the clothing would look on the model.
         </Typography>
+        
+        {isAutomationAvailable && (
+          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Button
+              variant="outlined"
+              color={useAutomation ? "success" : "primary"}
+              size="small"
+              onClick={handleToggleAutomation}
+              sx={{ 
+                borderRadius: 4,
+                textTransform: 'none',
+                px: 2,
+                py: 0.5,
+                fontSize: '0.85rem'
+              }}
+            >
+              {useAutomation ? "Using Hugging Face (Faster)" : "Using API (Default)"}
+            </Button>
+            <Tooltip title="Toggle between using the Hugging Face automation or the default API">
+              <Box component="span" sx={{ ml: 1, cursor: 'help', color: 'text.secondary' }}>
+                ℹ️
+              </Box>
+            </Tooltip>
+          </Box>
+        )}
         
         <Divider sx={{ mb: 4 }} />
       </Box>
