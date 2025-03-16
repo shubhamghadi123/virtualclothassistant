@@ -138,8 +138,10 @@ const ImageUploadBox = ({ title, description, onImageUpload, boxType }) => {
             justifyContent: 'center',
             alignItems: 'center',
             transition: 'all 0.3s ease',
+            backgroundColor: isHovered ? `${borderColor}10` : 'transparent',
             '&:hover': {
-              backgroundColor: `${borderColor}10`,
+              borderColor: borderColor, // Make border same color as the box
+              backgroundColor: `${borderColor}10`, // Light background
             },
           }}
         >

@@ -91,7 +91,7 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
       <Box 
         sx={{ 
           border: resultImage ? 'none' : '2px dashed',
-          borderColor: 'divider',
+          borderColor: isHovered ? borderColor : 'divider', // 🟢 Match border color on hover
           borderRadius: '12px',  // 🟢 Consistent with the container
           p: 4,
           textAlign: 'center',
@@ -103,9 +103,10 @@ const ResultBox = ({ resultImage, isLoading, error, apiStatus = 'idle', onDownlo
           flex: 1,
           mb: 2,
           transition: 'all 0.3s ease',
+          backgroundColor: isHovered ? theme.palette.background.paper : 'transparent',
           '&:hover': {
-            backgroundColor: resultImage ? 'transparent' : `${borderColor}05`,
-            borderColor: resultImage ? 'transparent' : borderColor,
+            backgroundColor: theme.palette.background.paper,
+            borderColor: borderColor,
           }
         }}
       >
