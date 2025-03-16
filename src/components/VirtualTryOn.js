@@ -11,7 +11,6 @@ import {
   Snackbar,
   Container,
   CircularProgress,
-  Tooltip,
 } from '@mui/material';
 import ImageUploadBox from './ImageUploadBox';
 import ResultBox from './ResultBox';
