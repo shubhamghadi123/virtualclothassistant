@@ -310,7 +310,8 @@ const VirtualTryOn = () => {
         </Grid>
       </Grid>
       
-      <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
+      {/* Generate Try-On Button */}
+      <Box sx={{ mt: 4, mb: 4, display: 'flex', justifyContent: 'center' }}>
         <Button
           variant="contained"
           color="primary"
@@ -323,17 +324,49 @@ const VirtualTryOn = () => {
             px: 6,
             fontSize: '1.2rem',
             borderRadius: 2,
-            minWidth: 250
+            minWidth: 250,
+            fontWeight: 600,
+            boxShadow: theme => !(!modelImage || !clothImage || isLoading) ? 
+              '0 4px 15px rgba(98, 0, 238, 0.25)' : 'none',
+            transition: 'all 0.3s ease',
+            transform: 'translateY(0)',
+            '&:hover': {
+              boxShadow: theme => !(!modelImage || !clothImage || isLoading) ? 
+                '0 6px 20px rgba(98, 0, 238, 0.35)' : 'none',
+              transform: theme => !(!modelImage || !clothImage || isLoading) ? 
+                'translateY(-3px)' : 'translateY(0)',
+            },
+            '&:active': {
+              transform: 'translateY(0)',
+              boxShadow: theme => !(!modelImage || !clothImage || isLoading) ? 
+                '0 2px 8px rgba(98, 0, 238, 0.2)' : 'none',
+            },
+            '@keyframes pulse': {
+              '0%': {
+                boxShadow: '0 0 0 0 rgba(98, 0, 238, 0.4)'
+              },
+              '70%': {
+                boxShadow: '0 0 0 10px rgba(98, 0, 238, 0)'
+              },
+              '100%': {
+                boxShadow: '0 0 0 0 rgba(98, 0, 238, 0)'
+              }
+            },
+            animation: theme => !(!modelImage || !clothImage || isLoading) ? 
+              'pulse 2s infinite' : 'none',
           }}
         >
           Generate Try-On
         </Button>
       </Box>
       
+      {/* Subtle divider to maintain visual separation */}
+      <Divider sx={{ mt: 3, width: '50%', mx: 'auto', opacity: 0.5 }} />
+      
       <Box 
         ref={howItWorksRef}
         sx={{ 
-          mt: -1, // Reduced from mt: 6 to decrease the distance
+          mt: 3, // Reduced from mt: 6 to decrease the distance
           pt: 2,
           pb: 4,
           scrollMarginTop: '80px', // Add scroll margin to account for header
