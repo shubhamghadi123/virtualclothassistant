@@ -10,11 +10,14 @@ import {
   Alert,
   Snackbar,
   Container,
+  CircularProgress,
+  Chip,
 } from '@mui/material';
 import ImageUploadBox from './ImageUploadBox';
 import ResultBox from './ResultBox';
 import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import config from '../config';
 
 // Create a fallback image function outside of component
@@ -310,63 +313,116 @@ const VirtualTryOn = () => {
         </Grid>
       </Grid>
       
-      {/* Generate Try-On Button */}
-      <Box sx={{ mt: 4, mb: 4, display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
         <Button
           variant="contained"
           color="primary"
           size="large"
           disabled={!modelImage || !clothImage || isLoading}
           onClick={handleGenerateResult}
-          startIcon={<AutoAwesomeIcon />}
+          startIcon={isLoading ? null : <AutoAwesomeIcon />}
           sx={{ 
             py: 2, 
             px: 6,
             fontSize: '1.2rem',
             borderRadius: 2,
             minWidth: 250,
-            fontWeight: 600,
-            boxShadow: theme => !(!modelImage || !clothImage || isLoading) ? 
-              '0 4px 15px rgba(98, 0, 238, 0.25)' : 'none',
+            position: 'relative',
+            overflow: 'hidden',
             transition: 'all 0.3s ease',
-            transform: 'translateY(0)',
-            '&:hover': {
-              boxShadow: theme => !(!modelImage || !clothImage || isLoading) ? 
-                '0 6px 20px rgba(98, 0, 238, 0.35)' : 'none',
-              transform: theme => !(!modelImage || !clothImage || isLoading) ? 
-                'translateY(-3px)' : 'translateY(0)',
-            },
-            '&:active': {
-              transform: 'translateY(0)',
-              boxShadow: theme => !(!modelImage || !clothImage || isLoading) ? 
-                '0 2px 8px rgba(98, 0, 238, 0.2)' : 'none',
-            },
+            boxShadow: (modelImage && clothImage && !isLoading) 
+              ? `0 0 10px 2px ${theme.palette.primary.main}40, 0 4px 15px ${theme.palette.primary.main}30` 
+              : 'none',
+            animation: (modelImage && clothImage && !isLoading) ? 'pulse 2s infinite' : 'none',
             '@keyframes pulse': {
               '0%': {
-                boxShadow: '0 0 0 0 rgba(98, 0, 238, 0.4)'
+                boxShadow: `0 0 10px 2px ${theme.palette.primary.main}40, 0 4px 15px ${theme.palette.primary.main}30`
               },
-              '70%': {
-                boxShadow: '0 0 0 10px rgba(98, 0, 238, 0)'
+              '50%': {
+                boxShadow: `0 0 15px 5px ${theme.palette.primary.main}60, 0 4px 20px ${theme.palette.primary.main}50`
               },
               '100%': {
-                boxShadow: '0 0 0 0 rgba(98, 0, 238, 0)'
+                boxShadow: `0 0 10px 2px ${theme.palette.primary.main}40, 0 4px 15px ${theme.palette.primary.main}30`
               }
             },
-            animation: theme => !(!modelImage || !clothImage || isLoading) ? 
-              'pulse 2s infinite' : 'none',
+            '&:disabled': {
+              backgroundColor: theme.palette.grey[300],
+              color: theme.palette.grey[500],
+            },
+            '&:hover': {
+              transform: (modelImage && clothImage && !isLoading) ? 'translateY(-3px)' : 'none',
+              boxShadow: (modelImage && clothImage && !isLoading) 
+                ? `0 0 15px 5px ${theme.palette.primary.main}60, 0 8px 25px ${theme.palette.primary.main}40` 
+                : 'none',
+            }
           }}
         >
-          Generate Try-On
+          {isLoading ? (
+            <>
+              <CircularProgress 
+                size={24} 
+                color="inherit" 
+                sx={{ mr: 1 }} 
+              />
+              Processing...
+            </>
+          ) : (
+            'Generate Try-On'
+          )}
         </Button>
       </Box>
       
-      {/* Subtle divider to maintain visual separation */}
-      <Divider sx={{ mt: 3, width: '50%', mx: 'auto', opacity: 0.5 }} />
-      
+      {/* Feature list for the Generate Try-On button */}
+      <Box sx={{ 
+        mt: 2, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center',
+        p: 2,
+        borderRadius: 2,
+        bgcolor: 'rgba(0, 0, 0, 0.02)',
+        maxWidth: '600px',
+        mx: 'auto'
+      }}>
+        <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+          Button Features:
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+          <Chip 
+            icon={<CheckCircleOutlineIcon fontSize="small" />} 
+            label="Initially Disabled" 
+            size="small" 
+            variant="outlined" 
+            color="primary"
+          />
+          <Chip 
+            icon={<CheckCircleOutlineIcon fontSize="small" />} 
+            label="Enables when Both Images are Uploaded" 
+            size="small" 
+            variant="outlined" 
+            color="primary"
+          />
+          <Chip 
+            icon={<CheckCircleOutlineIcon fontSize="small" />} 
+            label="Loading State while Processing" 
+            size="small" 
+            variant="outlined" 
+            color="primary"
+          />
+          <Chip 
+            icon={<CheckCircleOutlineIcon fontSize="small" />} 
+            label="Glowing Effect when Active" 
+            size="small" 
+            variant="outlined" 
+            color="primary"
+          />
+        </Box>
+      </Box>
+
       <Box 
         ref={howItWorksRef}
         sx={{ 
-          mt: 3, // Reduced from mt: 6 to decrease the distance
+          mt: -1, // Reduced from mt: 6 to decrease the distance
           pt: 2,
           pb: 4,
           scrollMarginTop: '80px', // Add scroll margin to account for header
