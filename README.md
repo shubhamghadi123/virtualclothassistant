@@ -14,7 +14,7 @@ A web application that allows users to virtually try on clothes using AI technol
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/virtualclothassistant.git
+git clone https://github.com/shubhamghadi123/virtualclothassistant
 cd virtualclothassistant
 ```
 
