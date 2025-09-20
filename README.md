@@ -12,42 +12,53 @@ A web application that allows users to virtually try on clothes using AI technol
 
 ## Installation
 
-1. Clone the repository:
+### 1. Clone the repository:
 ```bash
 git clone https://github.com/shubhamghadi123/virtualclothassistant
 cd virtualclothassistant
 ```
 
-2. Install dependencies:
+### 2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
+### 3. Set up environment variables:
    - Copy `.env.example` to `.env`
    - Replace placeholder values with your actual API keys
 ```bash
 cp .env.example .env
 ```
 
-4. Start the development server:
+### 4. Setup and Configuration of API Key and URL
+
+#### 1. Get Your API Key
+
+   1. Go to the [**Segmind API Keys page**](https://cloud.segmind.com/console/api-keys).
+   2. **Log in** or sign up for a new account.
+   3. Click **Create New API Key** and copy the key that is generated for you.
+
+#### 2. Find Your Model URL
+
+1. Navigate to the **Model Hub** section on the Segmind website.
+2. Search for a virtual try-on model, such as **"SegFit"** or **"Try-On Diffusion"**.
+3. Select your desired model and go to its **API** tab.
+4. **Copy the URL** provided for that model.
+
+#### 3. Configure Your Project
+
+1. In the root directory of the project, create a file named .env.
+2. Open the .env file and add your credentials in the following format, replacing the placeholders with your actual key and URL:
+```
+   REACT_APP_SEGMIND_API_KEY=YOUR_API_KEY_HERE
+   REACT_APP_SEGMIND_API_URL=YOUR_MODEL_URL_HERE
+```
+3. Save the `.env` file.
+
+
+### 5. Start the development server:
 ```bash
 npm start
-```
-
-## Environment Variables
-
-This project uses environment variables to store sensitive information like API keys. To set up your environment:
-
-1. Create a `.env` file in the project root (use `.env.example` as a template)
-2. Add your API keys and other configuration values
-3. The `.env` file is ignored by Git to keep your keys secure
-
-Example `.env` file:
-```
-REACT_APP_API_KEY=your_api_key_here
-REACT_APP_API_URL=your_api_url_here
-REACT_APP_ENV=development
 ```
 
 ## Usage
