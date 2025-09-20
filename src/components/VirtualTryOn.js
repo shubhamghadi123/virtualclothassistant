@@ -18,6 +18,31 @@ import HowItWorks from './HowItWorks';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import config from '../config';
 
+// Helper function to convert any image file to a JPEG data URL
+const convertToJPEG = (fileDataUrl) => {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      // Convert the canvas to a JPEG data URL with 90% quality
+      const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      resolve(jpegDataUrl);
+    };
+
+    img.onerror = (error) => {
+      console.error("Error converting image:", error);
+      reject(new Error("Could not load or convert the image file."));
+    };
+
+    img.src = fileDataUrl;
+  });
+};
+
 // Create a fallback image function outside of component
 const createFallbackImage = () => {
   return `https://placehold.co/600x800/e2e8f0/1e293b?text=Example+try+on`;
@@ -55,18 +80,26 @@ const VirtualTryOn = () => {
     }
   }, []);
 
-  const handleImageUpload = (image, type) => {
+  const handleImageUpload = async (image, type) => {
+  try {
+    // This line calls the function
+    const jpegImage = await convertToJPEG(image);
+
     if (type === 'model') {
-      setModelImage(image);
+      setModelImage(jpegImage);
     } else if (type === 'cloth') {
-      setClothImage(image);
+      setClothImage(jpegImage);
     }
     
-    // Reset result when a new image is uploaded
     setResultImage(null);
     setError(null);
     setApiStatus('idle');
-  };
+
+  } catch (err) {
+    console.error("Image conversion failed:", err);
+    setError("The uploaded file could not be processed. Please try a different image.");
+  }
+};
 
   const handleGenerateResult = async () => {
     if (!modelImage || !clothImage) {
@@ -132,6 +165,7 @@ const VirtualTryOn = () => {
   
   // Function to generate result using API
   const generateWithAPI = async () => {
+    console.log('VERIFYING API URL:', config.api.url);
     // Check if API key is configured
     if (!isApiConfigured()) {
       console.warn('API key not configured. Using fallback image.');
@@ -141,11 +175,13 @@ const VirtualTryOn = () => {
     // Extract base64 data from the data URLs
     const modelBase64 = modelImage.split(',')[1];
     const clothBase64 = clothImage.split(',')[1];
+
+    console.log("Verifying Model Base64:", modelBase64.substring(0, 100) + "...");
     
     // Prepare the request payload
     const requestData = {
       model_image: modelBase64,
-      cloth_image: clothBase64,
+      outfit_image: clothBase64,
       category: "Upper body", // Required parameter for Segmind API
       num_inference_steps: 35,
       guidance_scale: 2,
